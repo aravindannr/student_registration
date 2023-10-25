@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "865921270595",
+    "project_id": "student-registration-44c3a",
+    "storage_bucket": "student-registration-44c3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865921270595:android:1e669961f6b8aa497265f6",
+        "android_client_info": {
+          "package_name": "com.example.task_one"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDt5XJuabYpmuj2wt0xS2fx-w7FMKRpKdc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
