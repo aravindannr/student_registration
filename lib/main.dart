@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:task_one/screens/firstPage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:task_one/screens/updateDetailes.dart';
+
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -34,11 +36,12 @@ class MyApp extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
-        primaryColor: Colors.blue,
-        hintColor: Colors.teal,
         fontFamily: 'Roboto',
       ),
       home: FirstPage(),
+      routes: {
+        '/update' : (context) => UpdateDetailes()
+      },
     );
   }
 }

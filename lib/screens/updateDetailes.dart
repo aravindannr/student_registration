@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class RegPage extends StatefulWidget {
-  const RegPage({super.key});
+class UpdateDetailes extends StatefulWidget {
+  const UpdateDetailes({super.key});
 
   @override
-  State<RegPage> createState() => _RegPageState();
+  State<UpdateDetailes> createState() => _UpdateDetailesState();
 }
 
-class _RegPageState extends State<RegPage> {
+class _UpdateDetailesState extends State<UpdateDetailes> {
   final CollectionReference studentdetailes =
       FirebaseFirestore.instance.collection('studentdetailes');
   final List<String> _countryCodes = ['+1', '+91', '+44', '+81', '+86'];
@@ -75,6 +75,21 @@ class _RegPageState extends State<RegPage> {
 
   @override
   Widget build(BuildContext context) {
+    final update = ModalRoute.of(context)!.settings.arguments as Map;
+
+    _firstNameController.text = update['First Name'];
+    _lastNameController.text = update['Last Name'];
+    _emailController.text = update['Email Address'];
+    _dobController.text = update['Date of Birth'];
+    _ageController.text = update['Age'];
+    _selectedGender = update['Gender'];
+    _selectedNationality = update['Nationality'];
+    _addressController.text = update['Address'];
+    _parentNameController.text = update['Parent Name'];
+    _guardianNameController.text = update['Guardian Name'];
+    _placeController.text = update['Place'];
+    _phoneNumberController.text = update['Phone Number'];
+    final id = update['id'];
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -194,7 +209,7 @@ class _RegPageState extends State<RegPage> {
                     DateTime? pickedDate = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
-                      firstDate: DateTime(1900),
+                      firstDate: DateTime(2000),
                       lastDate: DateTime.now(),
                     );
                     if (pickedDate != null && pickedDate != _selectedDate) {
@@ -379,9 +394,6 @@ class _RegPageState extends State<RegPage> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter phone number';
                           }
-                          if (value.length != 10) {
-                            return 'Enter a valid mobile number';
-                          }
                           return null;
                         },
                       ),
@@ -396,19 +408,10 @@ class _RegPageState extends State<RegPage> {
                         borderRadius: BorderRadius.circular(15)),
                     textStyle: const TextStyle(fontSize: 18),
                   ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      addtoDatabase();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please fill out all fields.'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    }
+                  onPressed: () async {
+                    updateDtailes(id);
                   },
-                  child: const Text('Submit'),
+                  child: const Text('Update'),
                 ),
               ],
             ),
@@ -418,39 +421,29 @@ class _RegPageState extends State<RegPage> {
     );
   }
 
-  void addtoDatabase() {
-    String phoneNumberWithCode =
-        '$_selectedCountryCode${_phoneNumberController.text}';
+  Future<void> updateDtailes(id) async {
     final data = {
       'First Name': _firstNameController.text,
       'Last Name': _lastNameController.text,
       'Email Address': _emailController.text,
-      'Gender': _selectedGender,
       'Date of Birth': _dobController.text,
       'Age': _ageController.text,
+      'Gender': _selectedGender,
       'Nationality': _selectedNationality,
       'Address': _addressController.text,
       'Parent Name': _parentNameController.text,
       'Guardian Name': _guardianNameController.text,
-      'Place': _guardianNameController.text,
-      'Phone Number': phoneNumberWithCode,
+      'Place': _placeController.text,
+      'Phone Number': _phoneNumberController.text
     };
-    studentdetailes.add(data).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Student details added successfully!'),
-            duration: Duration(seconds: 2)),
-      );
-      Future.delayed(const Duration(milliseconds: 500), () {
-        Navigator.pop(context);
-      });
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to add student details. Please try again.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    });
+    studentdetailes.doc(id).update(data);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Details updated successfully.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    await Future.delayed(Duration(milliseconds: 500));
+    Navigator.pop(context);
   }
 }
