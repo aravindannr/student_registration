@@ -68,12 +68,6 @@ class _UpdateDetailesState extends State<UpdateDetailes> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _selectedNationality = 'Indian';
-  }
-
-  @override
   Widget build(BuildContext context) {
     final update = ModalRoute.of(context)!.settings.arguments as Map;
 
@@ -409,7 +403,17 @@ class _UpdateDetailesState extends State<UpdateDetailes> {
                     textStyle: const TextStyle(fontSize: 18),
                   ),
                   onPressed: () async {
-                    updateDtailes(id);
+                    if (_formKey.currentState!.validate()) {
+                      updateDtailes(id);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text('Please fix the errors before submitting.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   },
                   child: const Text('Update'),
                 ),

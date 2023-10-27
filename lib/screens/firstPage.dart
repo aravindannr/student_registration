@@ -16,7 +16,9 @@ class _FirstPageState extends State<FirstPage> {
   final TextEditingController _searchController = TextEditingController();
 
   void Search(String searchQuery) {
-    setState(() {});
+    setState(() {
+      _searchController.text.toLowerCase();
+    });
   }
 
   final FocusNode searchFocus = FocusNode();
@@ -61,7 +63,7 @@ class _FirstPageState extends State<FirstPage> {
                               _searchController.text)
                       .where('First Name',
                           isLessThanOrEqualTo:
-                              _searchController.text+ '\uf8ff')
+                              _searchController.text+ '\uf8ff',)
                       .orderBy('First Name')
                       .snapshots(),
                   builder: (context, AsyncSnapshot snapshot) {
