@@ -13,7 +13,12 @@ class FirstPage extends StatefulWidget {
 class _FirstPageState extends State<FirstPage> {
   final CollectionReference studentdetailes =
       FirebaseFirestore.instance.collection('studentdetailes');
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+
+  void Search(String searchQuery) {
+    setState(() {});
+  }
+
   final FocusNode searchFocus = FocusNode();
   List searchResult = [];
 
@@ -24,7 +29,7 @@ class _FirstPageState extends State<FirstPage> {
         centerTitle: true,
         backgroundColor: Colors.blueGrey.shade200,
         elevation: 0,
-        title: Text(
+        title: const Text(
           'Student Detailes',
           style: TextStyle(color: Colors.black),
         ),
@@ -38,17 +43,27 @@ class _FirstPageState extends State<FirstPage> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search Student',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                 ),
-                onChanged: (value) {},
+                onChanged: (value) {
+                  Search(value);
+                },
               ),
             ),
             Expanded(
               child: StreamBuilder(
-                  stream: studentdetailes.snapshots(),
+                  stream: studentdetailes
+                      .where('First Name',
+                          isGreaterThanOrEqualTo:
+                              _searchController.text)
+                      .where('First Name',
+                          isLessThanOrEqualTo:
+                              _searchController.text+ '\uf8ff')
+                      .orderBy('First Name')
+                      .snapshots(),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
@@ -66,8 +81,8 @@ class _FirstPageState extends State<FirstPage> {
                                             )));
                               },
                               child: Container(
-                                padding: EdgeInsets.all(16.0),
-                                margin: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.all(16.0),
+                                margin: const EdgeInsets.symmetric(
                                     vertical: 8.0, horizontal: 16.0),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
@@ -78,7 +93,7 @@ class _FirstPageState extends State<FirstPage> {
                                       color: Colors.grey.withOpacity(0.5),
                                       spreadRadius: 2,
                                       blurRadius: 5,
-                                      offset: Offset(0, 3),
+                                      offset: const Offset(0, 3),
                                     ),
                                   ],
                                 ),
@@ -87,33 +102,33 @@ class _FirstPageState extends State<FirstPage> {
                                   children: [
                                     Text(
                                       "Name: ${student['First Name']} ${student['Last Name']}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                       ),
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           "Email: ${student['Email Address']}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 16,
                                           ),
                                         ),
                                         PopupMenuButton(
-                                          icon: Icon(Icons.more_vert),
+                                          icon: const Icon(Icons.more_vert),
                                           itemBuilder: (context) => [
                                             PopupMenuItem(
-                                              child: Text("Delete"),
+                                              child: const Text("Delete"),
                                               onTap: () {
                                                 delete(student.id);
                                               },
                                             ),
                                             PopupMenuItem(
-                                              child: Text("Edit"),
+                                              child: const Text("Edit"),
                                               onTap: () {
                                                 Navigator.pushNamed(
                                                     context, '/update',
@@ -149,10 +164,10 @@ class _FirstPageState extends State<FirstPage> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Text(
                                       "Phone: ${student['Phone Number']}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 16,
                                       ),
                                     ),
@@ -162,13 +177,7 @@ class _FirstPageState extends State<FirstPage> {
                             );
                           });
                     } else {
-                      return Container(
-                        height: double.maxFinite,
-                        width: double.maxFinite,
-                        child: Center(
-                          child: Text("Nothing to show"),
-                        ),
-                      );
+                      return Center(child: CircularProgressIndicator());
                     }
                   }),
             ),
@@ -178,9 +187,9 @@ class _FirstPageState extends State<FirstPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => RegPage()));
+              .push(MaterialPageRoute(builder: (context) => const RegPage()));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -189,25 +198,25 @@ class _FirstPageState extends State<FirstPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Confirmation'),
-        content: Text('Are you sure you want to delete this item?'),
+        title: const Text('Delete Confirmation'),
+        content: const Text('Are you sure you want to delete this item?'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               studentdetailes.doc(id).delete();
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Deleted.'),
                 duration: Duration(seconds: 1),
               ));
             },
-            child: Text('Confirm'),
+            child: const Text('Confirm'),
           ),
         ],
       ),
